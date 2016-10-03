@@ -1,4 +1,6 @@
 /RUNNING_PID
+.cache*
+.cache*
 /logs/
 /project/*-shim.sbt
 /project/project/
