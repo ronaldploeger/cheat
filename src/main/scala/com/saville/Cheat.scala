@@ -10,6 +10,7 @@ import com.typesafe.config.impl.ConfigString
 import com.typesafe.config.impl.ConfigString
 import com.typesafe.config.ConfigValueType
 import scala.util.Try
+import com.typesafe.config.ConfigException
 
 object Cheat {
   val systemKeys = ConfigFactory.systemProperties().root().keySet()
@@ -40,11 +41,19 @@ object Cheat {
     }
   }
 
-  private def loadConfigEntries(path: Option[String]) = {
+  private def loadConfigEntries(path: Option[String]): Map[String, Object] = {
     val cheats = ConfigFactory.load("cheats.conf");
 
     val config = if (path.isDefined) {
-      cheats.getObject(path.get)
+      try {
+        cheats.getObject(path.get)      
+      } catch {
+        case e: ConfigException.WrongType => {
+          println(cheats.getString(path.get))
+          return Map()
+        }
+      }
+      
     } else {
       cheats.root()
     }
