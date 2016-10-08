@@ -20,7 +20,8 @@ object Cheat {
     val path: Option[String] = getPath(args)
     val maxLevel: Option[Int] = getMaxLevel(args)
     val entries = loadConfigEntries(path);
-    printConfigEntries(entries, maxLevel = maxLevel)
+    val removeSystemKeys = !path.isDefined
+    printConfigEntries(entries, maxLevel = maxLevel, removeSystemKeys = removeSystemKeys)
   }
 
   private def getPath(args: Array[String]): Option[String] = {
@@ -61,23 +62,32 @@ object Cheat {
     config.unwrapped().toMap
   }
 
-  private def printConfigEntries(entries: Map[String, Object], maxLevel: Option[Int], level: Int = 0): Unit = {
+  private def printConfigEntries(entries: Map[String, Object], maxLevel: Option[Int], level: Int = 0, removeSystemKeys: Boolean): Unit = {
     val space = " " * level * 2;
     val keys = entries.keys.toSeq.sortWith(_.toLowerCase() < _.toLowerCase())
 
     for (key <- keys) {
       if (!maxLevel.isDefined || maxLevel.get > level) {
-        if (level != 0 || (!systemKeys.contains(key) && !envKeys.contains(key))) {
+        if (removeSystemKeys && isSystemKey(level, key)) {
+          //do nothing
+        } else  {
           val value = entries(key)
           value match {
             case map: java.util.Map[String, Object] => {
               println(f"${space}${key}:")
-              printConfigEntries(entries = map.toMap, maxLevel = maxLevel, level = level + 1)
+              printConfigEntries(entries = map.toMap, maxLevel = maxLevel, level = level + 1, removeSystemKeys = removeSystemKeys)
             }
             case _ => println(f"${space}${key}%-15s ${value}")
           }
         }
       }
     }
+  }
+  
+  /**
+   * Remove system/env keys on the first level
+   */
+  private def isSystemKey(level: Int, key: String): Boolean = {
+    (level == 0 && (systemKeys.contains(key) || envKeys.contains(key)))
   }
 }
