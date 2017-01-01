@@ -43,9 +43,9 @@ object Cheat {
   }
 
   private def loadConfigEntries(path: Option[String]): Map[String, Object] = {
-    val cheats = ConfigFactory.load("cheats.conf");
-
-    val config = if (path.isDefined) {
+    val cheats = ConfigFactory.load("cheats.conf")
+    
+    val config = if (path.isDefined) {      
       try {
         cheats.getObject(path.get)      
       } catch {
@@ -54,7 +54,6 @@ object Cheat {
           return Map()
         }
       }
-      
     } else {
       cheats.root()
     }
