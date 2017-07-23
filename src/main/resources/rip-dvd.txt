@@ -1,0 +1,9 @@
+tcprobe -i /dev/sr0
+
+  [dvd_reader.c] DVD title 1/1: 17 chapter(s), 1 angle(s), title set 1
+
+for i in {1..5};do
+  transcode -x null,dvd -y null,tcaud -i /dev/sr0 -T 1,$i,1 -a 0 -E 44100,16,2 --lame_preset standard -m ./NitzerEbb-Markthalle-${i}.mp3;
+done
+
+    Use easytag to edit audio metadata.
