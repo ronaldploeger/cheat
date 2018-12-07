@@ -1,0 +1,108 @@
+Microservices
+-----------------------------------------
+Domain-driven design. Continuous delivery. On-demand virtualization. Infrastructure automation. Small autonomous teams. Systems at scale. Microservices have emerged from this world.
+
+
+Small and focused on doing one thing well
+
+Cohesion - the drive to have related code grouped together - is an important concept when we think about microservices.
+
+We focus our microservice boundaries on business boundaries making it obvious where code lives for a given piece of functionality.
+
+The smaller the service the more you maximize the benefits and downsides of microservice architecture. As you get smaller the benefits around interdependence increases. But so too does some of the somplexity that emerges from having more and more moving parts. As you get better at handling this complexity you can strive for smaller and smaller services.
+
+
+Autonomous
+
+Our microservice is a separate entity. Deployed in its own operating system process or in its own container.
+
+All communication between services themselves are via network calls to enforce separation between the services and avoid the perils of tight coupling.
+
+Microservices need to be able to change independently of each other and be deployed by themselves without requiring consumers to change.
+
+We need to think about what our services should expose and what they should hide.
+Our services expose an API and collaborating services communicate with us via those APIs. We need to think about what technology is appropriate to ensure that this itself does not couple consumers.
+
+The golden rule: can you make a change to a service and deploy it by itself without changing anything else?
+
+
+Key Benefits
+
+Technology Heterogeneity
+- Different technologies for different services
+- Store data differently for parts of our system
+- Adopt technology more quickly
+
+If I really can rewrite my microservice in two weeks you may well mitigate the risks of embracing new technologies.
+
+Resilience
+- Service boundaries become obvious bulkheads
+
+Scaling
+- With smaller services you can just scale those services that need scaling
+
+Ease of deployment
+- Make a chnage to a single service and deploy it independently of the rest of the system.
+- This allows us to get our code deployed faster.
+- It also means we an get our new functionality out to customers faster
+
+Organisational Alignment
+- Microservices allow  us to better align our architecture to our organization helping us to minimize the number of people working on any one codebase
+- We can also shift ownership of services between teams
+
+Composability
+- We open up opportunities for reuse of functionality.
+
+Optimization for Replaceability
+- With individual services being small in size the cost to replace them with a better implementation is much easer to manager than with a monolitic system
+
+
+How to model services
+-----------------------------------------
+Good Services
+
+Loose Coupling
+Change to one Service should not require change to another.
+In a microservice world it is important to being able to make a change to one service and deploy it, without needing to change any other part of the system.
+
+High Cohesion
+"Gather together those things that change for the same reason and separate those things that change for different reasons"
+Related behaviour should sit together and unrelated behaviour should sit elsewhere.
+If we want to chnage behaviour we want to be able to chnage it in one place and release that change as soon as possible.
+If we have to chnage behaviour in lots of different places we will have to release lots of different services to deliver that change. This is slower and more risky.
+
+-> Find boundaries within our problem domain that helps ensure that related behavior is in one place and that communicates with other boundaries as loosely as possible.
+
+
+Bounded Context
+
+Any domain consists of multiple bounded contexts. Residing within a bounded context are things / models that do not need to communicate outside (details that only they need to know about) as well as things that are shared externally.
+Each bounded context has an explicit interface where it decides what models to share with other contexts.
+
+A bounded context is "a specific responsibility enforced by explicit boundaries".
+
+By thinking about what models should be shared and not sharing the internal representations we avoid the potential pitfalls that can result in tight coupling.
+
+
+Modules (Packages) and Microservices
+
+We can use modules (packages) within a process boundary to keep related code together and attempt to reduce coupling to other modules in the application.
+When starting out on a new code base this is probably a good place to begin.
+So once you have found the bounded contexts in your domain make sure they are modeled within the codebase as modules with shared and internal models.
+These modular boundaries then become excellent candidates for microservices.
+Microservics should cleanly align to bounded contexts.
+Once you become very proficient you may decide to skip the step of keeping the bounded context modeled as a module within a more monolithic system and jump straight for a separate microservice.
+
+
+Business Capabilities
+
+When you start to think about the bounded contexts that exists in your domain ask first "What does this context do" and only then "What data does it need to do that"
+
+
+Turtles all the way down
+
+At the start you will identify coarse-grained bounded contexts. But these can in turn contain further bounded contexts.
+When considering the bounderies of your microservices first think in terms of the coarse-grained contexts and then subdivide along these nested contexts when you are looking for the benefit of splitting out the seams.
+
+I have seen these nested contexts remaining hidden to other collaborating microservices to great effect. To the outside world they are still making use of business capabilities of the coarse-grained context but they are unaware that their requests are actually  being mapped transparently to two or more separate services.
+Sometime you will decide it makes more sense for the higher level bounded context to not be explicitly modeled as a service boundary but rather you might split out the nested contexts.
